@@ -27,8 +27,9 @@ grep "^Error" messagesB.log
 # find any files without exif
 exiftool -filename -r "$PHOTOLOCATION" -if '(not $datetimeoriginal or ($datetimeoriginal eq "0000:00:00 00:00:00"))' -common -csv > noexif.csv
 
+# need to skip first 2 lines of exiftools csv, due to headers
 # can't use awk for parsing, because might be commas in filename so, copy files which don't have exif to unsorted folder
-cat noexif.csv | sed "s/,[^,]*,[^,]*,[^,]*,[^,]*$//g" | while read -r file; do md5=( $(md5sum "$file") ); cp "$file" "$SORTEDLOCATION/unsorted/$md5.${file##*.}"; done
+tail +2 noexif.csv | sed "s/,[^,]*,[^,]*,[^,]*,[^,]*$//g" | while read -r file; do md5=( $(md5sum "$file") ); cp "$file" "$SORTEDLOCATION/unsorted/$md5.${file##*.}"; done
 
 # Delete the dupes
 fdupes -rdN "$SORTEDLOCATION" > dupes.txt
