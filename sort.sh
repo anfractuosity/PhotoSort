@@ -7,12 +7,12 @@
 PHOTOLOCATION="photos"
 SORTEDLOCATION="Sorted"
 
-mkdir -p $SORTEDLOCATION/unsorted
+mkdir -p "$SORTEDLOCATION/unsorted"
 
 rm *.log
 rm *.csv
 
-exiftool -v10 -o . -if '($datetimeoriginal and ($datetimeoriginal ne "0000:00:00 00:00:00"))' -d 'Sorted/%Y/%m/%d_%H:%M%%-c.%%e' '-Filename<DateTimeOriginal' -r $PHOTOLOCATION > messagesA.log 2> messagesB.log
+exiftool -v10 -o . -if '($datetimeoriginal and ($datetimeoriginal ne "0000:00:00 00:00:00"))' -d 'Sorted/%Y/%m/%d_%H:%M%%-c.%%e' '-Filename<DateTimeOriginal' -r "$PHOTOLOCATION" > messagesA.log 2> messagesB.log
 
 grep "^Error" messagesB.log
 
@@ -25,10 +25,10 @@ grep "^Error" messagesB.log
 #fi
 
 # find any files without exif
-exiftool -filename -r $PHOTOLOCATION -if '(not $datetimeoriginal or ($datetimeoriginal eq "0000:00:00 00:00:00"))' -common -csv > noexif.csv
+exiftool -filename -r "$PHOTOLOCATION" -if '(not $datetimeoriginal or ($datetimeoriginal eq "0000:00:00 00:00:00"))' -common -csv > noexif.csv
 
 # can't use awk for parsing, because might be commas in filename so, copy files which don't have exif to unsorted folder
-cat noexif.csv | sed "s/,[^,]*,[^,]*,[^,]*,[^,]*$//g" | while read -r file; do md5=( $(md5sum "$file") ); cp "$file" $SORTEDLOCATION/unsorted/$md5.${file##*.}; done
+cat noexif.csv | sed "s/,[^,]*,[^,]*,[^,]*,[^,]*$//g" | while read -r file; do md5=( $(md5sum "$file") ); cp "$file" "$SORTEDLOCATION/unsorted/$md5.${file##*.}"; done
 
 # Delete the dupes
-fdupes -rdN $SORTEDLOCATION > dupes.txt
+fdupes -rdN "$SORTEDLOCATION" > dupes.txt
