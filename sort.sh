@@ -32,11 +32,3 @@ cat noexif.csv | sed "s/,[^,]*,[^,]*,[^,]*,[^,]*$//g" | while read -r file; do m
 
 # Delete the dupes
 fdupes -rdN $SORTEDLOCATION > dupes.txt
-
-# Below not needed anymore 
-# First see if we can strip the .~NUMBER~ part of the file off (assuming another file with that name doesn't exist)
-#find Sorted -type d -print0 | xargs --no-run-if-empty -0 -L1 sh -c 'rename -v "s/.~[0-9]+~$//" $1/*' dummy
-# Now if there are still remaining tilde files, strip the tilde off the end bit, so the file is visible under 'lsl'
-#find Sorted -type d -print0 | xargs --no-run-if-empty -0 -L1 sh -c 'rename -v "s/\.~(\d+)~$/.\1/" $1/*' dummy 2>&1 | sed "s/\\\1 better written as.*\\.$//g;/^[[:space:]]*$/d"
-
-
